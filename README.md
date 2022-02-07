@@ -2,6 +2,11 @@
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
+# Libreria externas utilizadas
+
+npm i react-transition-group
+npm i @emotion/styled @emotion/react
+
 ## Available Scripts
 
 In the project directory, you can run:

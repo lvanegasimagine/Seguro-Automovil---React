@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import styled from "@emotion/styled";
+import { obtenerDiferenciaYear, calcularMarca, calcularPlan } from "../helpers/helper";
 
 const Campo = styled.div`
   display: flex;
@@ -45,12 +46,15 @@ const Error = styled.div`
   text-align: center;
   margin-bottom: 2rem;
 `;
-function Formulario() {
-  const [datos, setDatos] = useState({
+function Formulario({setResumen}) {
+  //State
+    const [datos, setDatos] = useState({
     marca: "",
     year: "",
     plan: "",
-  });
+    });
+
+    const [error, setError] = useState(false);
 
   const { marca, year, plan } = datos;
 
@@ -63,8 +67,56 @@ function Formulario() {
     })
   }
 
+  // cuando el usuario presiona submit
+
+  const cotizarSeguro = e => {
+      e.preventDefault();
+
+      if(marca.trim() === '' || year.trim() === '' || plan.trim() === ''){
+          setError(true);
+          return ;
+      }
+
+      setError(false);
+
+      // una base de 2000
+      let resultado = 2000;
+
+      // obtener la diferencia de años
+
+      const diferencia = obtenerDiferenciaYear(year);
+
+      // por cada año hay que restar el 3% 
+      
+      resultado -= ((diferencia * 3) * resultado) / 100;
+
+      console.log(resultado);
+
+      // Americano 15% asiatico 5% europeo 30%
+
+      resultado = calcularMarca(marca) * resultado;
+
+      // Basico aumenta 20% completo 50%
+
+      const incrementoPlan = calcularPlan(plan);
+      resultado = parseFloat(incrementoPlan * resultado).toFixed(2);
+
+      setResumen({
+        cotizacion: resultado,
+        datos
+      });
+
+      // Total
+
+
+  }
+
   return (
-    <form>
+    <form onSubmit={cotizarSeguro}>
+
+    {
+        error ? <Error>Todos los campos son obligatorio</Error> : null
+    }
       <Campo>
         <Label htmlFor="Marca">Marca</Label>
         <Select name="marca" value={marca} onChange={obtenerInformacion}>
@@ -97,7 +149,7 @@ function Formulario() {
         <InputRadio type="radio" name="plan" value="completo" checked={plan === "completo"} onChange={obtenerInformacion} />
         Completo
       </Campo>
-      <Boton type="Boton">Cotizar</Boton>
+      <Boton type="submit">Cotizar</Boton>
     </form>
   );
 }
