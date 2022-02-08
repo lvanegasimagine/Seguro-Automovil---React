@@ -4,8 +4,8 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 
 # Libreria externas utilizadas
 
-npm i react-transition-group
-npm i @emotion/styled @emotion/react
+### `npm i react-transition-group`
+### `npm i @emotion/styled @emotion/react`
 
 ## Available Scripts
 
