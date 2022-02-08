@@ -1,6 +1,10 @@
 import React, { useState } from "react";
 import styled from "@emotion/styled";
-import { obtenerDiferenciaYear, calcularMarca, calcularPlan } from "../helpers/helper";
+import {
+  obtenerDiferenciaYear,
+  calcularMarca,
+  calcularPlan,
+} from "../helpers/helper";
 
 const Campo = styled.div`
   display: flex;
@@ -46,77 +50,77 @@ const Error = styled.div`
   text-align: center;
   margin-bottom: 2rem;
 `;
-function Formulario({setResumen}) {
+function Formulario({ setResumen, setCargando }) {
   //State
-    const [datos, setDatos] = useState({
+  const [datos, setDatos] = useState({
     marca: "",
     year: "",
     plan: "",
-    });
+  });
 
-    const [error, setError] = useState(false);
+  const [error, setError] = useState(false);
 
   const { marca, year, plan } = datos;
 
   // Obtener datos del formulario
 
-  const obtenerInformacion = e => {
+  const obtenerInformacion = (e) => {
     setDatos({
-        ...datos,
-        [e.target.name] : e.target.value
-    })
-  }
+      ...datos,
+      [e.target.name]: e.target.value,
+    });
+  };
 
   // cuando el usuario presiona submit
 
-  const cotizarSeguro = e => {
-      e.preventDefault();
+  const cotizarSeguro = (e) => {
+    e.preventDefault();
 
-      if(marca.trim() === '' || year.trim() === '' || plan.trim() === ''){
-          setError(true);
-          return ;
-      }
+    if (marca.trim() === "" || year.trim() === "" || plan.trim() === "") {
+      setError(true);
+      return;
+    }
 
-      setError(false);
+    setError(false);
 
-      // una base de 2000
-      let resultado = 2000;
+    // una base de 2000
+    let resultado = 2000;
 
-      // obtener la diferencia de años
+    // obtener la diferencia de años
 
-      const diferencia = obtenerDiferenciaYear(year);
+    const diferencia = obtenerDiferenciaYear(year);
 
-      // por cada año hay que restar el 3% 
-      
-      resultado -= ((diferencia * 3) * resultado) / 100;
+    // por cada año hay que restar el 3%
 
-      console.log(resultado);
+    resultado -= (diferencia * 3 * resultado) / 100;
 
-      // Americano 15% asiatico 5% europeo 30%
+    // Americano 15% asiatico 5% europeo 30%
 
-      resultado = calcularMarca(marca) * resultado;
+    resultado = calcularMarca(marca) * resultado;
 
-      // Basico aumenta 20% completo 50%
+    // Basico aumenta 20% completo 50%
 
-      const incrementoPlan = calcularPlan(plan);
-      resultado = parseFloat(incrementoPlan * resultado).toFixed(2);
+    const incrementoPlan = calcularPlan(plan);
+    resultado = parseFloat(incrementoPlan * resultado).toFixed(2);
 
+    // Muestra el Spinner
+    setCargando(true);
+
+    setTimeout(() => {
+      // Elimina el spinner
+      setCargando(false);
+
+      //Pasa la informacion al componente principal
       setResumen({
         cotizacion: resultado,
-        datos
+        datos,
       });
-
-      // Total
-
-
-  }
+    }, 1000);
+  };
 
   return (
     <form onSubmit={cotizarSeguro}>
-
-    {
-        error ? <Error>Todos los campos son obligatorio</Error> : null
-    }
+      {error ? <Error>Todos los campos son obligatorio</Error> : null}
       <Campo>
         <Label htmlFor="Marca">Marca</Label>
         <Select name="marca" value={marca} onChange={obtenerInformacion}>
@@ -144,9 +148,21 @@ function Formulario({setResumen}) {
       </Campo>
       <Campo>
         <Label htmlFor="Año">Plan</Label>
-        <InputRadio type="radio" name="plan" value="basico" checked={plan === "basico"} onChange={obtenerInformacion} />
+        <InputRadio
+          type="radio"
+          name="plan"
+          value="basico"
+          checked={plan === "basico"}
+          onChange={obtenerInformacion}
+        />
         Basico
-        <InputRadio type="radio" name="plan" value="completo" checked={plan === "completo"} onChange={obtenerInformacion} />
+        <InputRadio
+          type="radio"
+          name="plan"
+          value="completo"
+          checked={plan === "completo"}
+          onChange={obtenerInformacion}
+        />
         Completo
       </Campo>
       <Boton type="submit">Cotizar</Boton>
